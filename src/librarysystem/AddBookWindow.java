@@ -20,10 +20,29 @@ public class AddBookWindow extends JFrame implements LibWindow{
     
     private JPanel mainPanel;
     private JPanel topPanel;
-    private JButton button1, button2;
-    
-    private AddBookWindow() {};
-    
+    private JPanel outerMiddle;
+    private JPanel lowerHalf;
+
+
+    private JTextField authFirstNameField;
+    private JTextField authLastNameField;
+    private JTextField titleField;
+
+    @Override
+    public void init() {
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        defineTopPanel();
+        defineOuterMiddle();
+        defineLowerHalf();
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(outerMiddle, BorderLayout.CENTER);
+        mainPanel.add(lowerHalf, BorderLayout.SOUTH);
+        getContentPane().add(mainPanel);
+        isInitialized(true);
+    }
+
+    @Override
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -70,14 +89,33 @@ public class AddBookWindow extends JFrame implements LibWindow{
         centerFrameOnDesktop(this);
         setResizable(false);
     }
-    
-    private void handleWindowClosing() {
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent w) {
-                dispose();
-                // other clean-up
-                System.exit(0);
-            }
+
+
+    private void defineLowerHalf() {
+        lowerHalf = new JPanel();
+        lowerHalf.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JButton backButton = new JButton("<= Back to Main");
+        addBackButtonListener(backButton);
+        lowerHalf.add(backButton);
+    }
+
+
+    private void attachAddBookButtonListener(JButton butn) {
+        butn.addActionListener(evt -> {
+//            List<Author> authors = new ArrayList<Author>();
+//            String fname = authFirstNameField.getText();
+//            String lname = authLastNameField.getText();
+//
+//            String title = titleField.getText();
+//            authors.add(new Author(fname, lname));
+//
+//            Data.addBookTitle(title);
+//            displayInfo("The book " + title + " has been added " +
+//                    "to the collection!");
+            System.out.println(authFirstNameField.getText().trim());
+            System.out.println(titleField.getText().trim());
+
         });
     }
  
@@ -90,18 +128,11 @@ public class AddBookWindow extends JFrame implements LibWindow{
         int frameWidth = f.getSize().width;
         f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
     }
-  
-  public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable()
-		{
-			public void run() {
-				AddBookWindow mf = new AddBookWindow();				
-				mf.setVisible(true);
-			}
-		});
-	}
 
-
-	
-
+    private void addBackButtonListener(JButton butn) {
+        butn.addActionListener(evt -> {
+            LibrarySystem.hideAllWindows();
+            LibrarySystem.INSTANCE.setVisible(true);
+        });
+    }
 }

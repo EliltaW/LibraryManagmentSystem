@@ -35,18 +35,20 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     private AddMemberWindow () {}
 
     public void init() {
-        initializeWindow();
         mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        setTitle("Add Member");
         defineTopPanel();
         defineMiddlePanel();
         defineBottomPanel();
-        mainPanel.setLayout(new BorderLayout());
+        BorderLayout bl = new BorderLayout();
+        bl.setVgap(30);
+        mainPanel.setLayout(bl);
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(middlePanel, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         isInitialized(true);
-        pack();
         //setSize(660, 500);
     }
 
@@ -144,24 +146,6 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         });
     }
 
-    private void initializeWindow() {
-        setTitle("Add Member");
-        setSize(500, 1000);
-        handleWindowClosing();
-        centerFrameOnDesktop(this);
-        setResizable(false);
-    }
-
-    public static void centerFrameOnDesktop(Component f) {
-        final int SHIFT_AMOUNT = 0;
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        int height = toolkit.getScreenSize().height;
-        int width = toolkit.getScreenSize().width;
-        int frameHeight = f.getSize().height;
-        int frameWidth = f.getSize().width;
-        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
-    }
-
     private void addBackButtonListener(JButton butn) {
         butn.addActionListener(evt -> {
             LibrarySystem.hideAllWindows();
@@ -176,6 +160,9 @@ public class AddMemberWindow extends JFrame implements LibWindow {
             String city = cityTextField.getText().trim();
             String state = stateTextField.getText().trim();
             String zip = zipTextField.getText().trim();
+
+            System.out.println("&&&");
+            System.out.println(street);
 
             String memberId = idTextField.getText().trim();
             String fname = nameTextFeild.getText().trim();
