@@ -1,7 +1,14 @@
 package librarysystem;
 
+import business.Address;
+import business.ControllerInterface;
+import business.LibraryMember;
+import business.SystemController;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class AddMemberWindow extends JFrame implements LibWindow {
     public static final AddMemberWindow INSTANCE = new AddMemberWindow();
@@ -9,29 +16,13 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     private boolean isInitialized = false;
 
     private JPanel mainPanel;
-    private JPanel upperHalf;
-    private JPanel middleHalf;
-    private JPanel lowerHalf;
-
     private JPanel topPanel;
-    private JPanel firstMiddlePanel;
-    private JPanel secondMiddlePanel;
-    private JPanel lowerPanel;
-    private JPanel leftTextPanel;
-    private JPanel rightTextPanel;
-    private JPanel anotherTextPanel;
+    private JPanel middlePanel;
+    private JPanel bottomPanel;
 
-    private JTextField memberId;
-    private JTextField firstName;
-    private JTextField lastName;
-    private JTextField street;
-    private JTextField city;
-    private JTextField state;
-    private JTextField zip;
-    private JTextField telephoneNumber;
-
-    private JLabel label;
-    private JButton addMember;
+    private JTextField nameTextFeild, streetTextField, cityTextField, stateTextField, zipTextField, phoneTexFiel,
+            idTextField, lastNameTextFeild;
+    private JButton button;
 
     public boolean isInitialized() {
         return isInitialized;
@@ -39,160 +30,136 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     public void isInitialized(boolean val) {
         isInitialized = val;
     }
-    private JTextField messageBar = new JTextField();
-    public void clear() {
-        messageBar.setText("");
-    }
 
     /* This class is a singleton */
     private AddMemberWindow () {}
 
     public void init() {
+        initializeWindow();
         mainPanel = new JPanel();
-        defineUpperHalf();
-        defineMiddleHalf();
-        defineLowerHalf();
-        BorderLayout bl = new BorderLayout();
-        bl.setVgap(30);
-        mainPanel.setLayout(bl);
-
-        mainPanel.add(upperHalf, BorderLayout.NORTH);
-        mainPanel.add(middleHalf, BorderLayout.CENTER);
-        mainPanel.add(lowerHalf, BorderLayout.SOUTH);
+        defineTopPanel();
+        defineMiddlePanel();
+        defineBottomPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(middlePanel, BorderLayout.CENTER);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         isInitialized(true);
         pack();
         //setSize(660, 500);
-
-
     }
-    private void defineUpperHalf() {
 
-        upperHalf = new JPanel();
-        upperHalf.setLayout(new BorderLayout());
-        defineTopPanel();
-        defineFirstMiddlePanel();
-        defineSecondMiddlePanel();
-        defineLowerPanel();
-        upperHalf.add(topPanel, BorderLayout.NORTH);
-        upperHalf.add(firstMiddlePanel, BorderLayout.CENTER);
-        upperHalf.add(secondMiddlePanel, BorderLayout.CENTER);
-        upperHalf.add(lowerPanel, BorderLayout.SOUTH);
-
-    }
-    private void defineMiddleHalf() {
-        middleHalf = new JPanel();
-        middleHalf.setLayout(new BorderLayout());
-        JSeparator s = new JSeparator();
-        s.setOrientation(SwingConstants.HORIZONTAL);
-        //middleHalf.add(Box.createRigidArea(new Dimension(0,50)));
-        middleHalf.add(s, BorderLayout.SOUTH);
-
-    }
-    private void defineLowerHalf() {
-
-        lowerHalf = new JPanel();
-        lowerHalf.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JButton backButton = new JButton("<= Back to Main");
-        addBackButtonListener(backButton);
-        lowerHalf.add(backButton);
-
-    }
     private void defineTopPanel() {
         topPanel = new JPanel();
-        JPanel intPanel = new JPanel(new BorderLayout());
-        intPanel.add(Box.createRigidArea(new Dimension(0,20)), BorderLayout.NORTH);
-        JLabel loginLabel = new JLabel("Add Member");
-        Util.adjustLabelFont(loginLabel, Color.BLUE.darker(), true);
-        intPanel.add(loginLabel, BorderLayout.CENTER);
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        topPanel.add(intPanel);
+
+        JLabel idLable = new JLabel("Member Id");
+        idTextField = new JTextField(10);
+        JPanel idPanel = createTextPanel(idLable, idTextField);
+
+        JLabel labelName = new JLabel("First Name");
+        nameTextFeild = new JTextField(10);
+        JPanel namePanel = createTextPanel(labelName, nameTextFeild);
+
+        JLabel labelLastName = new JLabel("Last Name");
+        lastNameTextFeild = new JTextField(10);
+        JPanel lastNamePanel = createTextPanel(labelLastName, lastNameTextFeild);
+
+        JLabel labelStreet = new JLabel("Street");
+        streetTextField = new JTextField(10);
+        JPanel streetPanel = createTextPanel(labelStreet, streetTextField);
+
+        topPanel.add(idPanel);
+        topPanel.add(namePanel);
+        topPanel.add(lastNamePanel);
+        topPanel.add(streetPanel);
 
     }
 
+    private void defineBottomPanel() {
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        button = new JButton("Submit");
+        addSubmitButtonListener(button);
+        JButton backButton = new JButton("<= Back to Main");
+        addBackButtonListener(backButton);
 
-
-    private void defineFirstMiddlePanel() {
-        firstMiddlePanel =new JPanel();
-        firstMiddlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        defineLeftTextPanel();
-        defineAnotherTextPanel();
-        defineRightTextPanel();
-        firstMiddlePanel.add(leftTextPanel);
-        firstMiddlePanel.add(rightTextPanel);
+        bottomPanel.add(button);
+        bottomPanel.add(backButton);
     }
 
-    private void defineSecondMiddlePanel() {
-        secondMiddlePanel =new JPanel();
-        secondMiddlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        defineLeftTextPanel();
-        defineAnotherTextPanel();
-        defineRightTextPanel();
-        secondMiddlePanel.add(leftTextPanel);
-        secondMiddlePanel.add(rightTextPanel);
-    }
-    private void defineLowerPanel() {
-        lowerPanel = new JPanel();
-        addMember = new JButton("Add Member");
-        addLoginButtonListener(addMember);
-        lowerPanel.add(addMember);
-    }
+    private void defineMiddlePanel() {
+        middlePanel = new JPanel();
+        middlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-    private void defineLeftTextPanel() {
+        JLabel cityLabel = new JLabel("City");
+        cityTextField = new JTextField(10);
+        JPanel cityPanel = createTextPanel(cityLabel, cityTextField);
 
-        JPanel topText = new JPanel();
-        JPanel bottomText = new JPanel();
-        topText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
-        bottomText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
+        JLabel stateLabel = new JLabel("State");
+        stateTextField = new JTextField(10);
+        JPanel statePanel = createTextPanel(stateLabel, stateTextField);
 
-        memberId = new JTextField(10);
-        label = new JLabel("Member Id");
-        label.setFont(Util.makeSmallFont(label.getFont()));
-        topText.add(memberId);
-        bottomText.add(label);
+        JLabel zipLabel = new JLabel("Zip");
+        zipTextField = new JTextField(10);
+        JPanel zipPanel = createTextPanel(zipLabel, zipTextField);
 
-        leftTextPanel = new JPanel();
-        leftTextPanel.setLayout(new BorderLayout());
-        leftTextPanel.add(topText,BorderLayout.NORTH);
-        leftTextPanel.add(bottomText,BorderLayout.CENTER);
-    }
-    private void defineAnotherTextPanel() {
+        JLabel phoneLabel = new JLabel("Phone Number");
+        phoneTexFiel = new JTextField(10);
+        JPanel phonePanel = createTextPanel(phoneLabel, phoneTexFiel);
 
-        JPanel topText = new JPanel();
-        JPanel bottomText = new JPanel();
-        topText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
-        bottomText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
+        middlePanel.add(cityPanel);
+        middlePanel.add(statePanel);
+        middlePanel.add(zipPanel);
+        middlePanel.add(phonePanel);
 
-        memberId = new JTextField(10);
-        label = new JLabel("Member Id");
-        label.setFont(Util.makeSmallFont(label.getFont()));
-        topText.add(memberId);
-        bottomText.add(label);
-
-        anotherTextPanel = new JPanel();
-        anotherTextPanel.setLayout(new BorderLayout());
-        anotherTextPanel.add(topText,BorderLayout.NORTH);
-        anotherTextPanel.add(bottomText,BorderLayout.CENTER);
     }
 
-    private void defineRightTextPanel() {
+    private static JPanel createTextPanel(JLabel lab, JTextField textField) {
 
-        JPanel topText = new JPanel();
-        JPanel bottomText = new JPanel();
-        topText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
-        bottomText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
+        JPanel top = new JPanel();
+        JPanel bottom = new JPanel();
+        top.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        bottom.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
-        firstName = new JTextField(10);
-        label = new JLabel("First Name");
-        label.setFont(Util.makeSmallFont(label.getFont()));
-        topText.add(firstName);
-        bottomText.add(label);
+        lab.setFont(Util.makeSmallFont(lab.getFont()));
+        top.add(lab);
+        bottom.add(textField);
 
-        rightTextPanel = new JPanel();
-        rightTextPanel.setLayout(new BorderLayout());
-        rightTextPanel.add(topText,BorderLayout.NORTH);
-        rightTextPanel.add(bottomText,BorderLayout.CENTER);
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BorderLayout());
+        textPanel.add(top, BorderLayout.NORTH);
+        textPanel.add(bottom, BorderLayout.CENTER);
+        return textPanel;
+    }
+
+    private void handleWindowClosing() {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent w) {
+                dispose();
+                // other clean-up
+                System.exit(0);
+            }
+        });
+    }
+
+    private void initializeWindow() {
+        setTitle("Add Member");
+        setSize(500, 1000);
+        handleWindowClosing();
+        centerFrameOnDesktop(this);
+        setResizable(false);
+    }
+
+    public static void centerFrameOnDesktop(Component f) {
+        final int SHIFT_AMOUNT = 0;
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        int height = toolkit.getScreenSize().height;
+        int width = toolkit.getScreenSize().width;
+        int frameHeight = f.getSize().height;
+        int frameWidth = f.getSize().width;
+        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
     }
 
     private void addBackButtonListener(JButton butn) {
@@ -202,10 +169,38 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         });
     }
 
-    private void addLoginButtonListener(JButton butn) {
+    private void addSubmitButtonListener(JButton butn) {
         butn.addActionListener(evt -> {
 
+            String street = streetTextField.getText().trim();
+            String city = cityTextField.getText().trim();
+            String state = stateTextField.getText().trim();
+            String zip = zipTextField.getText().trim();
+
+            String memberId = idTextField.getText().trim();
+            String fname = nameTextFeild.getText().trim();
+            String lname = lastNameTextFeild.getText().trim();
+            String tel = phoneTexFiel.getText().trim();
+
+            Address address = new Address(street, city, state, zip);
+            LibraryMember libraryMember  = new LibraryMember(memberId, fname, lname, tel, address);
+
+            LibrarySystem.INSTANCE.ci.addMember(libraryMember);
+            JOptionPane.showMessageDialog(this, "Member Added Successfully",
+                    "Success", 1);
+            clearData();
         });
+    }
+
+    public void clearData() {
+        streetTextField.setText("");
+        cityTextField.setText("");
+        stateTextField.setText("");
+        zipTextField.setText("");
+        idTextField.setText("");
+        nameTextFeild.setText("");
+        lastNameTextFeild.setText("");
+        phoneTexFiel.setText("");
     }
 }
 

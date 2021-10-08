@@ -40,6 +40,12 @@ public class SystemController implements ControllerInterface {
 		retval.addAll(da.readBooksMap().keySet());
 		return retval;
 	}
-	
-	
+
+	@Override
+	public void addMember(LibraryMember member) {
+		System.out.println("***");
+		System.out.println(member);
+		DataAccess dataAccess = new DataAccessFacade();
+		dataAccess.saveNewMember(member);
+	}
 }
