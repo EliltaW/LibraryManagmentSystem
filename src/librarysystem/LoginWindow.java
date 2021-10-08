@@ -231,10 +231,10 @@ class AddBookWindowListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         LibrarySystem.hideAllWindows();
-        AddBookWindow.INSTANCE.init();
-        Util.centerFrameOnDesktop(AddBookWindow.INSTANCE);
-        AddBookWindow.INSTANCE.setVisible(true);
-        AddBookWindow.INSTANCE.pack();
+        AddCopyBookWindow.INSTANCE.init();
+        Util.centerFrameOnDesktop(AddCopyBookWindow.INSTANCE);
+        AddCopyBookWindow.INSTANCE.setVisible(true);
+        AddCopyBookWindow.INSTANCE.pack();
 
     }
 }

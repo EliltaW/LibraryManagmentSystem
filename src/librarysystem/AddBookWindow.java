@@ -1,116 +1,107 @@
 package librarysystem;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class AddBookWindow extends JFrame implements LibWindow {
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-    public static final AddBookWindow INSTANCE = new AddBookWindow();
+
+public class AddBookWindow extends JFrame implements LibWindow{
+	
+	public static final AddBookWindow INSTANCE = new AddBookWindow();
     private boolean isInitialized = false;
-
+    
     private JPanel mainPanel;
     private JPanel topPanel;
-    private JPanel outerMiddle;
-
-
-    private JTextField authFirstNameField;
-    private JTextField authLastNameField;
-    private JTextField titleField;
-
-    @Override
-    public void init() {
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        defineTopPanel();
-        defineOuterMiddle();
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(outerMiddle, BorderLayout.CENTER);
-        getContentPane().add(mainPanel);
-        isInitialized(true);
-    }
-
-    @Override
+    private JButton button1, button2;
+    
+    private AddBookWindow() {};
+    
     public boolean isInitialized() {
         return isInitialized;
     }
-
-    @Override
+    
     public void isInitialized(boolean val) {
         isInitialized = val;
     }
 
-    public void defineTopPanel() {
-        topPanel = new JPanel();
-        JLabel AddBookLabel = new JLabel("Add Book Title");
-        Util.adjustLabelFont(AddBookLabel, Util.DARK_BLUE, true);
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        topPanel.add(AddBookLabel);
+
+    @Override
+	public void init() {
+
+		 initializeWindow();
+	        mainPanel = new JPanel();
+	        defineTopPanel();
+	        mainPanel.setLayout(new BorderLayout());
+	        mainPanel.add(topPanel, BorderLayout.CENTER);
+	        getContentPane().add(mainPanel);
+	        isInitialized(true);
+	        pack();
+	}
+    
+  private void defineTopPanel() {
+    	
+	  topPanel = new JPanel();
+	  topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        button1 = new JButton("Add Existing Book");
+        button2 = new JButton("Add New Book");
+        // addSubmitButtonListener(button);
+        JButton backButton = new JButton("<= Back to Main");
+       // addBackButtonListener(backButton);
+
+        topPanel.add(button1, BorderLayout.NORTH);
+        topPanel.add(button2, BorderLayout.CENTER);
+       topPanel.add(backButton, BorderLayout.SOUTH);
+       
     }
 
-    public void defineOuterMiddle() {
-        outerMiddle = new JPanel();
-        outerMiddle.setLayout(new BorderLayout());
 
-        //set up left and right panels
-        JPanel middlePanel = new JPanel();
-        FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 25, 25);
-        middlePanel.setLayout(fl);
-        JPanel leftPanel = new JPanel();
-        JPanel rightPanel = new JPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-
-        JLabel authFirstNameLabel = new JLabel("Author First Name");
-        JLabel authLastNameLabel = new JLabel("Author Last Name");
-        JLabel titleLabel = new JLabel("Book Title");
-
-        authFirstNameField = new JTextField(10);
-        authLastNameField = new JTextField(10);
-        titleField = new JTextField(10);
-
-        leftPanel.add(authFirstNameLabel);
-        leftPanel.add(Box.createRigidArea(new Dimension(0,12)));
-        leftPanel.add(authLastNameLabel);
-        leftPanel.add(Box.createRigidArea(new Dimension(0,12)));
-        leftPanel.add(titleLabel);
-
-
-        rightPanel.add(authFirstNameField);
-        rightPanel.add(Box.createRigidArea(new Dimension(0,8)));
-        rightPanel.add(authLastNameField);
-        rightPanel.add(Box.createRigidArea(new Dimension(0,8)));
-        rightPanel.add(titleField);
-
-        middlePanel.add(leftPanel);
-        middlePanel.add(rightPanel);
-        outerMiddle.add(middlePanel, BorderLayout.NORTH);
-
-        //add button at bottom
-        JButton addBookButton = new JButton("Add Book");
-        attachAddBookButtonListener(addBookButton);
-        JPanel addBookButtonPanel = new JPanel();
-        addBookButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        addBookButtonPanel.add(addBookButton);
-        outerMiddle.add(addBookButtonPanel, BorderLayout.CENTER);
-
+    private void initializeWindow() {
+        setTitle("Add Book");
+        setSize(300, 250);
+        handleWindowClosing();
+        centerFrameOnDesktop(this);
+        setResizable(false);
     }
-    private void attachAddBookButtonListener(JButton butn) {
-        butn.addActionListener(evt -> {
-//            List<Author> authors = new ArrayList<Author>();
-//            String fname = authFirstNameField.getText();
-//            String lname = authLastNameField.getText();
-//
-//            String title = titleField.getText();
-//            authors.add(new Author(fname, lname));
-//
-//            Data.addBookTitle(title);
-//            displayInfo("The book " + title + " has been added " +
-//                    "to the collection!");
-
+    
+    private void handleWindowClosing() {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent w) {
+                dispose();
+                // other clean-up
+                System.exit(0);
+            }
         });
     }
-    public void updateData() {
-        // nothing to do
-
+ 
+  public static void centerFrameOnDesktop(Component f) {
+        final int SHIFT_AMOUNT = 0;
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        int height = toolkit.getScreenSize().height;
+        int width = toolkit.getScreenSize().width;
+        int frameHeight = f.getSize().height;
+        int frameWidth = f.getSize().width;
+        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
     }
+  
+  public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run() {
+				AddBookWindow mf = new AddBookWindow();				
+				mf.setVisible(true);
+			}
+		});
+	}
+
+
+	
+
 }
