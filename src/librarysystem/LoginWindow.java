@@ -198,25 +198,7 @@ public class LoginWindow extends JFrame implements LibWindow {
                     LibrarySystem.INSTANCE.ci.login(userName, pwd);
                     Auth currentAuth = SystemController.currentAuth;
                     LibrarySystem.hideAllWindows();
-                    JMenu menu = LibrarySystem.INSTANCE.options;
-                    menu.remove(0);
-                    String title = userName + " (" + currentAuth + ")";
-                    LibrarySystem.INSTANCE.setTitle(title);
-                    JMenuItem checkout = new JMenuItem("Checkout Book");
-                    menu.add(checkout);
-                    JMenuItem addBook = new JMenuItem("Add Book");
-                    addBook.addActionListener(new AddBookWindowListener());
-                    JMenuItem addMember = new JMenuItem("Add Member");
-                    addMember.addActionListener(new AddMemberWindowListener());
-                    menu.add(addMember);
-                    menu.add(addBook);
-
-                    if (Auth.LIBRARIAN.equals(currentAuth)) {
-                        addBook.setEnabled(false);
-                        addMember.setEnabled(false);
-                    } else if (Auth.ADMIN.equals(currentAuth)) {
-                        checkout.setEnabled(false);
-                    }
+                    LibrarySystem.INSTANCE.setAdditionalMenus(currentAuth, userName);
                     LibrarySystem.INSTANCE.setVisible(true);
                 } catch (LoginException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(), "Error", 0);
@@ -224,30 +206,8 @@ public class LoginWindow extends JFrame implements LibWindow {
             }
         });
     }
+
 }
 
-class AddBookWindowListener implements ActionListener {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        LibrarySystem.hideAllWindows();
-        AddBookWindow.INSTANCE.init();
-        Util.centerFrameOnDesktop(AddBookWindow.INSTANCE);
-        AddBookWindow.INSTANCE.setVisible(true);
-        AddBookWindow.INSTANCE.pack();
-
-    }
-}
-
-class AddMemberWindowListener implements ActionListener {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        LibrarySystem.hideAllWindows();
-        AddMemberWindow.INSTANCE.init();
-        Util.centerFrameOnDesktop(AddMemberWindow.INSTANCE);
-        AddMemberWindow.INSTANCE.setVisible(true);
-        AddMemberWindow.INSTANCE.pack();
-    }
-}
 
