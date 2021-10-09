@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 
 public class AddNewBookWindow extends JFrame implements LibWindow{
 
-	public static final AddNewBookWindow INSTANCE = new AddNewBookWindow();
+	public static AddNewBookWindow INSTANCE = new AddNewBookWindow();
 
 	private boolean isInitialized = false;
 
@@ -35,22 +35,23 @@ public class AddNewBookWindow extends JFrame implements LibWindow{
 		isInitialized = val;
 	}
 
-	/* This class is a singleton */
-	private AddNewBookWindow () {}
 
 	public void init() {
-		initializeWindow();
 		mainPanel = new JPanel();
+		setTitle("Add New Book");
+		handleWindowClosing();
 		defineTopPanel();
 		defineMiddlePanel();
 		defineBottomPanel();
+		BorderLayout bl = new BorderLayout();
+		bl.setVgap(30);
+		mainPanel.setLayout(bl);
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(middlePanel, BorderLayout.CENTER);
 		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 		getContentPane().add(mainPanel);
 		isInitialized(true);
-		pack();
 		// setSize(660, 500);
 	}
 	
@@ -101,9 +102,9 @@ public class AddNewBookWindow extends JFrame implements LibWindow{
 		 bottomPanel = new JPanel();
 	        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 	        addButton = new JButton("Add Book");
-	       // addSubmitButtonListener(button1);
+		    addBookButtonListener(addButton);
 	        JButton backButton = new JButton("<= Back to Main");
-	       // addBackButtonListener(backButton);
+	        addBackButtonListener(backButton);
 
 	        bottomPanel.add(addButton, BorderLayout.NORTH);
 	        bottomPanel.add(backButton, BorderLayout.SOUTH);
@@ -126,15 +127,6 @@ public class AddNewBookWindow extends JFrame implements LibWindow{
 	        textPanel.add(bottom, BorderLayout.CENTER);
 	        return textPanel;
 	    }
-
-
-	 private void initializeWindow() {
-	        setTitle("Add New Book");
-	        setSize(500, 1000);
-	        handleWindowClosing();
-	        centerFrameOnDesktop(this);
-	        setResizable(false);
-	    }
 	 
 	 private void handleWindowClosing() {
 	        addWindowListener(new WindowAdapter() {
@@ -146,15 +138,18 @@ public class AddNewBookWindow extends JFrame implements LibWindow{
 	        });
 	    }
 
-	 public static void centerFrameOnDesktop(Component f) {
-	        final int SHIFT_AMOUNT = 0;
-	        Toolkit toolkit = Toolkit.getDefaultToolkit();
-	        int height = toolkit.getScreenSize().height;
-	        int width = toolkit.getScreenSize().width;
-	        int frameHeight = f.getSize().height;
-	        int frameWidth = f.getSize().width;
-	        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
-	    }
+	private void addBookButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			System.out.println(authNameTextFeild.getText());
+			System.out.println(isbnTextField.getText());
+		});
+	}
 
-	
+	private void addBackButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			INSTANCE.setVisible(false);
+			INSTANCE = new AddNewBookWindow();
+		});
+	}
+
 }

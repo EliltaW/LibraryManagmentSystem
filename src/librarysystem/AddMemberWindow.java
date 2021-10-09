@@ -11,7 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class AddMemberWindow extends JFrame implements LibWindow {
-    public static final AddMemberWindow INSTANCE = new AddMemberWindow();
+    public static AddMemberWindow INSTANCE = new AddMemberWindow();
 
     private boolean isInitialized = false;
 
@@ -56,9 +56,9 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JLabel idLable = new JLabel("Member Id");
+        JLabel idLabel = new JLabel("Member Id");
         idTextField = new JTextField(10);
-        JPanel idPanel = createTextPanel(idLable, idTextField);
+        JPanel idPanel = createTextPanel(idLabel, idTextField);
 
         JLabel labelName = new JLabel("First Name");
         nameTextFeild = new JTextField(10);
@@ -84,7 +84,7 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         button = new JButton("Submit");
         addSubmitButtonListener(button);
-        JButton backButton = new JButton("<= Back to Main");
+        JButton backButton = new JButton("<= Back to Home");
         addBackButtonListener(backButton);
 
         bottomPanel.add(button);
@@ -148,8 +148,8 @@ public class AddMemberWindow extends JFrame implements LibWindow {
 
     private void addBackButtonListener(JButton butn) {
         butn.addActionListener(evt -> {
-            LibrarySystem.hideAllWindows();
-            LibrarySystem.INSTANCE.setVisible(true);
+            AddMemberWindow.INSTANCE.setVisible(false);
+            INSTANCE = new AddMemberWindow();
         });
     }
 

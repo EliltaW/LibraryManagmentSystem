@@ -35,8 +35,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
             LoginWindow.INSTANCE,
             AllMemberIdsWindow.INSTANCE,
             AllBookIdsWindow.INSTANCE,
-            AddMemberWindow.INSTANCE,
-            AddCopyBookWindow.INSTANCE
     };
 
     public static void hideAllWindows() {
@@ -99,28 +97,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
         options.add(login);
         options.add(allBookIds);
         options.add(allMemberIds);
-    }
-
-    public void setAdditionalMenus(Auth auth, String userName) {
-
-        options.getItem(0).setEnabled(false);
-        String title = userName + " (" + auth + ")";
-        LibrarySystem.INSTANCE.setTitle(title);
-        checkout = new JMenuItem("Checkout Book");
-        addBook = new JMenuItem("Add Book");
-        addBook.addActionListener(new AddBookWindowListener());
-        addMember = new JMenuItem("Add Member");
-        addMember.addActionListener(new AddMemberWindowListener());
-        options.add(checkout);
-        options.add(addMember);
-        options.add(addBook);
-
-        if (Auth.LIBRARIAN.equals(auth)) {
-            addBook.setEnabled(false);
-            addMember.setEnabled(false);
-        } else if (Auth.ADMIN.equals(auth)) {
-            checkout.setEnabled(false);
-        }
     }
 
     @Override
@@ -195,27 +171,4 @@ public class LibrarySystem extends JFrame implements LibWindow {
         }
     }
 
-    class AddBookWindowListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LibrarySystem.hideAllWindows();
-            AddBookWindow.INSTANCE.init();
-            Util.centerFrameOnDesktop(AddBookWindow.INSTANCE);
-            AddBookWindow.INSTANCE.setVisible(true);
-            AddBookWindow.INSTANCE.pack();
-        }
-    }
-
-    class AddMemberWindowListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LibrarySystem.hideAllWindows();
-            AddMemberWindow.INSTANCE.init();
-            Util.centerFrameOnDesktop(AddMemberWindow.INSTANCE);
-            AddMemberWindow.INSTANCE.setVisible(true);
-            AddMemberWindow.INSTANCE.pack();
-        }
-    }
 }

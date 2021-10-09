@@ -137,6 +137,5 @@ public class CheckOutBookWindow extends JFrame implements LibWindow{
 	        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
 	    }
 
-		
-	}
+}
 

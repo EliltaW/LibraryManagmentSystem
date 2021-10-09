@@ -4,27 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
-
-import business.ControllerInterface;
 
 import business.LoginException;
 import business.SystemController;
 import dataaccess.Auth;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessFacade;
-import dataaccess.User;
-
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 
 public class LoginWindow extends JFrame implements LibWindow {
-    public static final LoginWindow INSTANCE = new LoginWindow();
+    public static LoginWindow INSTANCE = new LoginWindow();
 
     private boolean isInitialized = false;
 
@@ -56,14 +45,6 @@ public class LoginWindow extends JFrame implements LibWindow {
     }
 
     private JTextField messageBar = new JTextField();
-
-    public void clear() {
-        messageBar.setText("");
-    }
-
-    /* This class is a singleton */
-    private LoginWindow() {
-    }
 
     public void init() {
         mainPanel = new JPanel();
@@ -198,8 +179,12 @@ public class LoginWindow extends JFrame implements LibWindow {
                     LibrarySystem.INSTANCE.ci.login(userName, pwd);
                     Auth currentAuth = SystemController.currentAuth;
                     LibrarySystem.hideAllWindows();
-                    LibrarySystem.INSTANCE.setAdditionalMenus(currentAuth, userName);
-                    LibrarySystem.INSTANCE.setVisible(true);
+                    HomeWindow.INSTANCE.setAuth(currentAuth);
+                    HomeWindow.INSTANCE.setUserName(userName);
+                    HomeWindow.INSTANCE.init();
+                    HomeWindow.INSTANCE.setSize(500, 300);
+                    Util.centerFrameOnDesktop(HomeWindow.INSTANCE);
+                    HomeWindow.INSTANCE.setVisible(true);
                 } catch (LoginException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(), "Error", 0);
                 }
