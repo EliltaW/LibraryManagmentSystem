@@ -11,4 +11,5 @@ public interface ControllerInterface {
 	public List<String> allMemberIds();
 	public List<String> allBookIds();
 	public void addMember(LibraryMember member);
+	public List<CheckoutRecordEntry> checkout(String memberId, String isbn) throws LibrarySystemException;
 }

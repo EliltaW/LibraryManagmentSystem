@@ -10,6 +10,9 @@ import javax.swing.*;
 import business.LoginException;
 import business.SystemController;
 import dataaccess.Auth;
+import librarysystem.rulesets.RuleException;
+import librarysystem.rulesets.RuleSet;
+import librarysystem.rulesets.RuleSetFactory;
 
 
 public class LoginWindow extends JFrame implements LibWindow {
@@ -33,7 +36,6 @@ public class LoginWindow extends JFrame implements LibWindow {
     private JTextField password;
     private JLabel label;
     private JButton loginButton;
-    private JButton logoutButton;
 
 
     public boolean isInitialized() {
@@ -172,24 +174,31 @@ public class LoginWindow extends JFrame implements LibWindow {
         butn.addActionListener(evt -> {
             String userName = username.getText().trim();
             String pwd = password.getText().trim();
-            if (userName.length() == 0 || pwd.length() == 0) {
-                JOptionPane.showMessageDialog(this, "Id and Password fields must be nonempty", "Empty Fields", 0);
-            } else {
-                try {
-                    LibrarySystem.INSTANCE.ci.login(userName, pwd);
-                    Auth currentAuth = SystemController.currentAuth;
-                    LibrarySystem.hideAllWindows();
-                    HomeWindow.INSTANCE.setAuth(currentAuth);
-                    HomeWindow.INSTANCE.setUserName(userName);
-                    HomeWindow.INSTANCE.init();
-                    HomeWindow.INSTANCE.setSize(500, 300);
-                    Util.centerFrameOnDesktop(HomeWindow.INSTANCE);
-                    HomeWindow.INSTANCE.setVisible(true);
-                } catch (LoginException e) {
-                    JOptionPane.showMessageDialog(this, e.getMessage(), "Error", 0);
-                }
+            try {
+                RuleSet rules = RuleSetFactory.getRuleSet(LoginWindow.this);
+                rules.applyRules(LoginWindow.this);
+                LibrarySystem.INSTANCE.ci.login(userName, pwd);
+                Auth currentAuth = SystemController.currentAuth;
+                LibrarySystem.hideAllWindows();
+                HomeWindow.INSTANCE.setAuth(currentAuth);
+                HomeWindow.INSTANCE.setUserName(userName);
+                HomeWindow.INSTANCE.init();
+                HomeWindow.INSTANCE.setSize(500, 300);
+                Util.centerFrameOnDesktop(HomeWindow.INSTANCE);
+                HomeWindow.INSTANCE.setVisible(true);
+            } catch (LoginException | RuleException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", 0);
             }
+
         });
+    }
+
+    public String getUserName() {
+        return username.getText();
+    }
+
+    public String getPassword() {
+        return password.getText();
     }
 
 }

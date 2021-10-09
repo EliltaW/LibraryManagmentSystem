@@ -1,92 +1,89 @@
 package librarysystem;
 
+import business.CheckoutRecordEntry;
+import business.ControllerInterface;
+import business.LibrarySystemException;
+import business.SystemController;
+import librarysystem.rulesets.RuleException;
+import librarysystem.rulesets.RuleSet;
+import librarysystem.rulesets.RuleSetFactory;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-public class CheckOutBookWindow extends JFrame implements LibWindow{
-	
-    public static final CheckOutBookWindow INSTANCE = new CheckOutBookWindow();
+public class CheckOutBookWindow extends JFrame implements LibWindow {
+
+    public static CheckOutBookWindow INSTANCE = new CheckOutBookWindow();
     private boolean isInitialized = false;
 
     private JPanel mainPanel;
     private JPanel topPanel;
-    private JPanel middlePanel;
     private JPanel bottomPanel;
-    
+
     private JTextField memberIdTextFeild, isbntTextField;
-    private JButton button;
-    
+
     /* This class is a singleton */
-    private CheckOutBookWindow () {}
-    
+    private CheckOutBookWindow() {
+    }
+
     public boolean isInitialized() {
         return isInitialized;
     }
-    
+
     public void isInitialized(boolean val) {
         isInitialized = val;
     }
 
-	@Override
-	public void init() {
-
-		 initializeWindow();
-	        mainPanel = new JPanel();
-	        defineTopPanel();
-	        defineMiddlePanel();
-	        defineBottomPanel();
-	        mainPanel.setLayout(new BorderLayout());
-	        mainPanel.add(topPanel, BorderLayout.NORTH);
-	        mainPanel.add(middlePanel, BorderLayout.CENTER);
-	        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-	        getContentPane().add(mainPanel);
-	        isInitialized(true);
-	        pack();
-	}
-	
-    private void defineTopPanel() {
-    	
-    	  topPanel = new JPanel();
-          topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-          JLabel idLable = new JLabel("Member Id");
-          memberIdTextFeild = new JTextField(10);
-          JPanel idPanel = createTextPanel(idLable, memberIdTextFeild);
-
-          topPanel.add(idPanel);
-       
+    @Override
+    public void init() {
+        mainPanel = new JPanel();
+        setTitle("Check out book");
+        handleWindowClosing();
+        defineTopPanel();
+        defineBottomPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        getContentPane().add(mainPanel);
+        isInitialized(true);
+        pack();
     }
-    
-    private void defineMiddlePanel() {
-    	
-    	middlePanel = new JPanel();
-        middlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+    private void defineTopPanel() {
+
+        topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JLabel idLable = new JLabel("Member Id");
+        memberIdTextFeild = new JTextField(10);
+        JPanel idPanel = createTextPanel(idLable, memberIdTextFeild);
 
         JLabel isbnLabel = new JLabel("ISBN");
         isbntTextField = new JTextField(10);
         JPanel isbnPanel = createTextPanel(isbnLabel, isbntTextField);
-    }
-    
-    private void defineBottomPanel() {
-    	
-    	bottomPanel = new JPanel();
-        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        button = new JButton("Check Out");
-      //  addSubmitButtonListener(button);
-        JButton backButton = new JButton("<= Back to Main");
-       // addBackButtonListener(backButton);
 
-        bottomPanel.add(button);
+        topPanel.add(idPanel);
+        topPanel.add(isbnPanel);
+
+    }
+
+    private void defineBottomPanel() {
+
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JButton checkout = new JButton("Check Out");
+        checkoutButtonListener(checkout);
+        JButton backButton = new JButton("<= Back to Home");
+        addBackButtonListener(backButton);
+
+        bottomPanel.add(checkout);
         bottomPanel.add(backButton);
     }
 
@@ -108,34 +105,52 @@ public class CheckOutBookWindow extends JFrame implements LibWindow{
         return textPanel;
     }
 
-	
-	 private void initializeWindow() {
-	        setTitle("Check Out Book");
-	        setSize(300, 250);
-	        handleWindowClosing();
-	        centerFrameOnDesktop(this);
-	        setResizable(false);
-	    }
-	 
-	 private void handleWindowClosing() {
-	        addWindowListener(new WindowAdapter() {
-	            public void windowClosing(WindowEvent w) {
-	                dispose();
-	                // other clean-up
-	                System.exit(0);
-	            }
-	        });
-	    }
-	 
-	  public static void centerFrameOnDesktop(Component f) {
-	        final int SHIFT_AMOUNT = 0;
-	        Toolkit toolkit = Toolkit.getDefaultToolkit();
-	        int height = toolkit.getScreenSize().height;
-	        int width = toolkit.getScreenSize().width;
-	        int frameHeight = f.getSize().height;
-	        int frameWidth = f.getSize().width;
-	        f.setLocation(((width - frameWidth) / 2) - SHIFT_AMOUNT, (height - frameHeight) / 3);
-	    }
+    private void handleWindowClosing() {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent w) {
+                dispose();
+                // other clean-up
+                System.exit(0);
+            }
+        });
+    }
+
+    private void addBackButtonListener(JButton butn) {
+        butn.addActionListener(evt -> {
+            CheckOutBookWindow.INSTANCE.setVisible(false);
+            INSTANCE = new CheckOutBookWindow();
+        });
+    }
+
+    private void checkoutButtonListener(JButton butn) {
+        butn.addActionListener(evt -> {
+            try {
+                RuleSet rules = RuleSetFactory.getRuleSet(CheckOutBookWindow.this);
+                rules.applyRules(CheckOutBookWindow.this);
+                ControllerInterface controllerInterface = new SystemController();
+                List<CheckoutRecordEntry> checkoutRecordEntries = controllerInterface.checkout(memberIdTextFeild.getText(), isbntTextField.getText());
+                System.out.println(memberIdTextFeild.getText());
+                System.out.println(isbntTextField.getText());
+                for (CheckoutRecordEntry c : checkoutRecordEntries) {
+                    System.out.println(c.getCheckoutDate());
+                    System.out.println(c.getDueDate());
+                }
+                JOptionPane.showMessageDialog(this, "Checked out Successfully",
+                        "Success", 1);
+            } catch (RuleException | LibrarySystemException e) {
+                JOptionPane.showMessageDialog(CheckOutBookWindow.this, e.getMessage(), "Error", 0);
+            }
+
+        });
+    }
+
+    public String getMemberIdTextFeild () {
+        return memberIdTextFeild.getText();
+    }
+
+    public String getiIbntTextField () {
+        return isbntTextField.getText();
+    }
 
 }
 

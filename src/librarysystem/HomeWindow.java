@@ -81,6 +81,7 @@ public class HomeWindow extends JFrame implements LibWindow {
         topLowerPanel = new JPanel();
         topLowerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JButton checkout = new JButton("Checkout Book");
+        checkout.addActionListener(new ChekoutButtonListener());
         topLowerPanel.add(checkout);
     }
 
@@ -175,6 +176,17 @@ public class HomeWindow extends JFrame implements LibWindow {
             LoginWindow.INSTANCE.setVisible(false);
             INSTANCE.setVisible(false);
             LibrarySystem.INSTANCE.setVisible(true);
+        }
+    }
+
+    class ChekoutButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            CheckOutBookWindow.INSTANCE.init();
+            Util.centerFrameOnDesktop(CheckOutBookWindow.INSTANCE);
+            CheckOutBookWindow.INSTANCE.setVisible(true);
+            CheckOutBookWindow.INSTANCE.pack();
         }
     }
 }

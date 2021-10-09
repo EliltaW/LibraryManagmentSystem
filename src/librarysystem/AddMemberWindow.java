@@ -1,9 +1,11 @@
 package librarysystem;
 
 import business.Address;
-import business.ControllerInterface;
 import business.LibraryMember;
-import business.SystemController;
+import librarysystem.rulesets.RuleException;
+import librarysystem.rulesets.RuleSet;
+import librarysystem.rulesets.RuleSetFactory;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,12 +29,14 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     public boolean isInitialized() {
         return isInitialized;
     }
+
     public void isInitialized(boolean val) {
         isInitialized = val;
     }
 
     /* This class is a singleton */
-    private AddMemberWindow () {}
+    private AddMemberWindow() {
+    }
 
     public void init() {
         mainPanel = new JPanel();
@@ -156,26 +160,30 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     private void addSubmitButtonListener(JButton butn) {
         butn.addActionListener(evt -> {
 
-            String street = streetTextField.getText().trim();
-            String city = cityTextField.getText().trim();
-            String state = stateTextField.getText().trim();
-            String zip = zipTextField.getText().trim();
+            try {
+                RuleSet rules = RuleSetFactory.getRuleSet(AddMemberWindow.this);
+                rules.applyRules(AddMemberWindow.this);
 
-            System.out.println("&&&");
-            System.out.println(street);
+                String street = streetTextField.getText().trim();
+                String city = cityTextField.getText().trim();
+                String state = stateTextField.getText().trim();
+                String zip = zipTextField.getText().trim();
 
-            String memberId = idTextField.getText().trim();
-            String fname = nameTextFeild.getText().trim();
-            String lname = lastNameTextFeild.getText().trim();
-            String tel = phoneTexFiel.getText().trim();
+                String memberId = idTextField.getText().trim();
+                String fname = nameTextFeild.getText().trim();
+                String lname = lastNameTextFeild.getText().trim();
+                String tel = phoneTexFiel.getText().trim();
 
-            Address address = new Address(street, city, state, zip);
-            LibraryMember libraryMember  = new LibraryMember(memberId, fname, lname, tel, address);
+                Address address = new Address(street, city, state, zip);
+                LibraryMember libraryMember = new LibraryMember(memberId, fname, lname, tel, address);
 
-            LibrarySystem.INSTANCE.ci.addMember(libraryMember);
-            JOptionPane.showMessageDialog(this, "Member Added Successfully",
-                    "Success", 1);
-            clearData();
+                LibrarySystem.INSTANCE.ci.addMember(libraryMember);
+                JOptionPane.showMessageDialog(this, "Member Added Successfully",
+                        "Success", 1);
+                clearData();
+            } catch (RuleException e) {
+                JOptionPane.showMessageDialog(AddMemberWindow.this, e.getMessage(), "Error", 0);
+            }
         });
     }
 
@@ -188,6 +196,35 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         nameTextFeild.setText("");
         lastNameTextFeild.setText("");
         phoneTexFiel.setText("");
+    }
+
+    public String getNameTextFeild() {
+        return nameTextFeild.getText();
+    }
+
+    public String getStreetTextField() {
+        return streetTextField.getText();
+    }
+
+    public String getCityTextField() {
+        return cityTextField.getText();
+    }
+
+    public String getStateTextField() {
+        return stateTextField.getText();
+    }
+
+    public String getZipTextField() {
+        return zipTextField.getText();
+    }
+
+    public String getPhoneTexField() {
+        return phoneTexFiel.getText();
+    }
+
+    public String getIdTextField() { return idTextField.getText(); }
+    public String getLastNameText() {
+        return lastNameTextFeild.getText();
     }
 }
 
