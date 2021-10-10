@@ -1,7 +1,5 @@
 package librarysystem;
 
-import business.Address;
-import business.LibraryMember;
 import librarysystem.rulesets.RuleException;
 import librarysystem.rulesets.RuleSet;
 import librarysystem.rulesets.RuleSetFactory;
@@ -11,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddMemberWindow extends JFrame implements LibWindow {
     public static AddMemberWindow INSTANCE = new AddMemberWindow();
@@ -174,10 +174,17 @@ public class AddMemberWindow extends JFrame implements LibWindow {
                 String lname = lastNameTextFeild.getText().trim();
                 String tel = phoneTexFiel.getText().trim();
 
-                Address address = new Address(street, city, state, zip);
-                LibraryMember libraryMember = new LibraryMember(memberId, fname, lname, tel, address);
+                Map<String, String> memberMap = new HashMap<>();
+                memberMap.put("street", street);
+                memberMap.put("city", city);
+                memberMap.put("state", state);
+                memberMap.put("zip", zip);
+                memberMap.put("memberId", memberId);
+                memberMap.put("fname", fname);
+                memberMap.put("lname", lname);
+                memberMap.put("tel", tel);
 
-                LibrarySystem.INSTANCE.ci.addMember(libraryMember);
+                LibrarySystem.INSTANCE.ci.addMember(memberMap);
                 JOptionPane.showMessageDialog(this, "Member Added Successfully",
                         "Success", 1);
                 clearData();

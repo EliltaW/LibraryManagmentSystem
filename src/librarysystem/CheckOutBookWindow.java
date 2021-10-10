@@ -7,6 +7,7 @@ import business.SystemController;
 import librarysystem.rulesets.RuleException;
 import librarysystem.rulesets.RuleSet;
 import librarysystem.rulesets.RuleSetFactory;
+import librarysystem.tables.CheckoutRecordTable;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -14,6 +15,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -128,15 +130,14 @@ public class CheckOutBookWindow extends JFrame implements LibWindow {
                 RuleSet rules = RuleSetFactory.getRuleSet(CheckOutBookWindow.this);
                 rules.applyRules(CheckOutBookWindow.this);
                 ControllerInterface controllerInterface = new SystemController();
-                List<CheckoutRecordEntry> checkoutRecordEntries = controllerInterface.checkout(memberIdTextFeild.getText(), isbntTextField.getText());
-                System.out.println(memberIdTextFeild.getText());
-                System.out.println(isbntTextField.getText());
-                for (CheckoutRecordEntry c : checkoutRecordEntries) {
-                    System.out.println(c.getCheckoutDate());
-                    System.out.println(c.getDueDate());
-                }
-                JOptionPane.showMessageDialog(this, "Checked out Successfully",
-                        "Success", 1);
+                List<String[]> data = controllerInterface.checkout(memberIdTextFeild.getText(), isbntTextField.getText());
+
+                CheckoutRecordTable.INSTANCE.init();
+                Util.centerFrameOnDesktop(CheckoutRecordTable.INSTANCE);
+                CheckoutRecordTable.INSTANCE.setValues( CheckoutRecordTable.INSTANCE.getModel(), data);
+                CheckoutRecordTable.INSTANCE.setVisible(true);
+                CheckoutRecordTable.INSTANCE.pack();
+
             } catch (RuleException | LibrarySystemException e) {
                 JOptionPane.showMessageDialog(CheckOutBookWindow.this, e.getMessage(), "Error", 0);
             }

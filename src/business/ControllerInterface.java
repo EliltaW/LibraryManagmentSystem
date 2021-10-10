@@ -1,15 +1,12 @@
 package business;
 
 import java.util.List;
-
-import business.Book;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessFacade;
+import java.util.Map;
 
 public interface ControllerInterface {
 	public void login(String id, String password) throws LoginException;
 	public List<String> allMemberIds();
 	public List<String> allBookIds();
-	public void addMember(LibraryMember member);
-	public List<CheckoutRecordEntry> checkout(String memberId, String isbn) throws LibrarySystemException;
+	public void addMember(Map<String, String> memberMap);
+	public List<String[]> checkout(String memberId, String isbn) throws LibrarySystemException;
 }

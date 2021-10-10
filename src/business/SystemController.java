@@ -6,6 +6,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dataaccess.Auth;
 import dataaccess.DataAccess;
@@ -45,14 +46,17 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public void addMember(LibraryMember member) {
-		System.out.println(member);
+	public void addMember(Map<String, String> memberMap) {
+
+		Address address = new Address(memberMap.get("street"), memberMap.get("city"), memberMap.get("state"), memberMap.get("zip"));
+		LibraryMember libraryMember = new LibraryMember(memberMap.get("memberId"), memberMap.get("fname"), memberMap.get("lname"), memberMap.get("tel"), address);
+		System.out.println(libraryMember);
 		DataAccess dataAccess = new DataAccessFacade();
-		dataAccess.saveNewMember(member);
+		dataAccess.saveNewMember(libraryMember);
 	}
 
 	@Override
-	public List<CheckoutRecordEntry> checkout(String memberId, String isbn) throws LibrarySystemException {
+	public List<String[]> checkout(String memberId, String isbn) throws LibrarySystemException {
 		DataAccess dataAccess = new DataAccessFacade();
 		LibraryMember member = dataAccess.readMemberMap().get(memberId);
 		Book book = dataAccess.readBooksMap().get(isbn);
@@ -69,6 +73,12 @@ public class SystemController implements ControllerInterface {
 		checkoutRecordEntries.add(checkoutRecordEntry);
 		member.setCheckoutRecord(checkoutRecord);
 		dataAccess.saveNewMember(member);
-		return checkoutRecordEntries;
+
+		List<String[]> data = new ArrayList<>();
+		for (int i=0 ; i < checkoutRecordEntries.size(); i++) {
+			CheckoutRecordEntry c = checkoutRecordEntries.get(i);
+			data.add(new String[]{c.getBookCopy().getBook().getIsbn(), c.getCheckoutDate().toString(), c.getDueDate().toString()});
+		}
+		return data;
 	}
 }
